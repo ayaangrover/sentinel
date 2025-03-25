@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Sentinel",
+  "version": "2.1",
+  "description": "A tab monitoring extension for ",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "*://ayaangrover.is-a.dev/*",
+    "*://sentinel.ayaangrover.hackclub.app/*"
+  ],
+  "externally_connectable": {
+    "matches": ["*://sentinel.ayaangrover.hackclub.app/*", "*://ayaangrover.is-a.dev/*"]
+  }
+}
