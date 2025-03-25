@@ -2,6 +2,9 @@
 
 Sentinel is a browser extension designed for teachers to track tabs and manage student browsing.
 
+Teacher Dashboard: [https://ayaangrover.is-a.dev/sentinel/website/](https://ayaangrover.is-a.dev/sentinel/website/)
+Student Login Page: [https://ayaangrover.is-a.dev/sentinel/website/](https://ayaangrover.is-a.dev/sentinel/website/)
+
 ## Installation
 
 1. Clone the repository.
