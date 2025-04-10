@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const Queue = require('bull');
 
 const app = express();
 app.use(express.json({ limit: "500mb" }));
@@ -40,23 +41,59 @@ const ruleSchema = new mongoose.Schema({
 });
 const Rule = mongoose.model("Rule", ruleSchema);
 
-app.post("/track", async (req, res) => {
-  const { userId, tabVisited } = req.body;
-  if (!userId || !tabVisited) return res.status(400).send("Missing parameters");
-  
-  activeStudents[userId] = {
-    lastActivity: Date.now(),
-    currentTab: tabVisited
-  };
-  
-  historyEntries.push({
-    userId,
-    tabVisited,
-    timestamp: Date.now()
-  });
-  
-  res.send("Activity tracked");
-  console.log("Activity tracked:", userId, tabVisited);
+const requestQueue = new Queue('requestQueue');
+
+const validateParams = (params, res) => {
+  for (const param of params) {
+    if (!param.value) {
+      res.status(400).send(`Missing parameter: ${param.name}`);
+      return false;
+    }
+  }
+  return true;
+};
+
+const handleTrack = async (data, res) => {
+  const { userId, tabVisited } = data;
+  if (!validateParams([{ name: 'userId', value: userId }, { name: 'tabVisited', value: tabVisited }], res)) return;
+
+  activeStudents[userId] = { lastActivity: Date.now(), currentTab: tabVisited };
+  historyEntries.push({ userId, tabVisited, timestamp: Date.now() });
+
+  res.send('Activity tracked');
+  console.log('Activity tracked:', userId, tabVisited);
+};
+
+const handleCapture = async (data, res) => {
+  const { userId, screenshot, timestamp } = data;
+  if (!validateParams([{ name: 'userId', value: userId }, { name: 'screenshot', value: screenshot }, { name: 'timestamp', value: timestamp }], res)) return;
+
+  captureEntries.push({ userId, screenshot, timestamp });
+  res.send('Capture recorded');
+  console.log('Capture recorded:', userId);
+};
+
+requestQueue.process(async (job, done) => {
+  const { route, data, res } = job.data;
+
+  try {
+    if (route === '/track') await handleTrack(data, res);
+    else if (route === '/capture') await handleCapture(data, res);
+
+    done();
+  } catch (error) {
+    console.error('Error processing job:', error);
+    res.status(500).send('Internal server error');
+    done(error);
+  }
+});
+
+app.post('/track', (req, res) => {
+  requestQueue.add({ route: '/track', data: req.body, res });
+});
+
+app.post('/capture', (req, res) => {
+  requestQueue.add({ route: '/capture', data: req.body, res });
 });
 
 app.get("/students", (req, res) => {
@@ -100,16 +137,6 @@ app.get("/history", (req, res) => {
   if (!userId) return res.status(400).send("userId query parameter is required");
   const userHistory = historyEntries.filter(entry => entry.userId === userId);
   res.json(userHistory);
-});
-
-app.post("/capture", (req, res) => {
-  const { userId, screenshot, timestamp } = req.body;
-  if (!userId || !screenshot || !timestamp) {
-    return res.status(400).send("Missing parameters");
-  }
-  captureEntries.push({ userId, screenshot, timestamp });
-  console.log("Capture recorded:", userId);
-  res.send("Capture recorded");
 });
 
 app.get("/capture/latest", (req, res) => {
