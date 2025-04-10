@@ -39,6 +39,7 @@ const ruleSchema = new mongoose.Schema({
   condition: Object,
   action: Object
 });
+
 const Rule = mongoose.model("Rule", ruleSchema);
 
 const requestQueue = new Queue('requestQueue');
