@@ -15,9 +15,7 @@
             --text: #212529;
             --border: #dee2e6;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--background);
@@ -29,23 +27,9 @@
             align-items: center;
             padding: 2rem;
         }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
+        .container { max-width: 600px; width: 100%; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 0.5rem; }
         .card {
             background: var(--card);
             border-radius: 10px;
@@ -53,7 +37,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 1.5rem;
         }
-
         .button {
             background: var(--primary);
             color: white;
@@ -65,12 +48,7 @@
             transition: all 0.2s;
             display: inline-block;
         }
-
-        .button:hover {
-            background: var(--secondary);
-            transform: translateY(-1px);
-        }
-
+        .button:hover { background: var(--secondary); transform: translateY(-1px); }
         .status {
             display: flex;
             align-items: center;
@@ -80,21 +58,75 @@
             background: #e9ecef;
             border-radius: 6px;
         }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4bb543;
-        }
-
-        .user-info {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #4bb543; }
+        .user-info { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
     </style>
-    <script src="main.js" defer></script>
+    <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC7Nzoe0pctRTmSboQNbSxxAzkYahFNtWw",
+  authDomain: "sentinel-tracker-8.firebaseapp.com",
+  projectId: "sentinel-tracker-8",
+  storageBucket: "sentinel-tracker-8.firebasestorage.app",
+  messagingSenderId: "1004030770470",
+  appId: "1:1004030770470:web:724f8dbece36e79d6a15e7"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const activityDiv = document.getElementById("activity");
+  const loginSection = document.getElementById("loginSection");
+
+  function renderSignInButton() {
+    loginSection.innerHTML = "";
+    const signInBtn = document.createElement("button");
+    signInBtn.className = "button";
+    signInBtn.textContent = "Sign in with Google";
+    signInBtn.addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(() => {
+        activityDiv.innerHTML = `<p>Sign in error. Please try again.</p>`;
+      });
+    });
+    loginSection.appendChild(signInBtn);
+  }
+
+  function renderSignOutButton() {
+    loginSection.innerHTML = "";
+    const signOutBtn = document.createElement("button");
+    signOutBtn.className = "button";
+    signOutBtn.textContent = "Sign Out";
+    signOutBtn.addEventListener("click", () => auth.signOut());
+    loginSection.appendChild(signOutBtn);
+  }
+
+  auth.onAuthStateChanged(async user => {
+    if (user && chrome && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage(
+        "kmcbdpnhhiaobekbealpdpabppbpfeah",
+        { email: user.email, password: user.uid },
+        () => {}
+      );
+    }
+
+    if (user) {
+      activityDiv.innerHTML = `
+        <p>Welcome, ${user.displayName || user.email}!</p>
+        <p>Email: ${user.email}</p>
+        <div class="status">
+          <div class="status-dot"></div>
+          <span>Active Session</span>
+        </div>
+      `;
+      renderSignOutButton();
+    } else {
+      activityDiv.innerHTML = `<p>Please sign in to view your session.</p>`;
+      renderSignInButton();
+    }
+  });
+});
+    </script>
 </head>
 <body>
     <div class="container">
@@ -103,13 +135,8 @@
             <p>Track your active session</p>
         </div>
 
-        <div id="activity" class="card">
-            <!-- content is injected here -->
-        </div>
-
-        <div id="loginSection" class="card" style="text-align: center;">
-            <!-- content is injected here -->
-        </div>
+        <div id="activity" class="card"></div>
+        <div id="loginSection" class="card" style="text-align: center;"></div>
     </div>
 </body>
 </html>

@@ -1,221 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Teacher Dashboard</title>
-    <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4bb543;
-            --danger: #dc3545;
-            --background: #f8f9fa;
-            --card: #ffffff;
-            --text: #212529;
-            --border: #dee2e6;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--background);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: var(--card);
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .button:hover {
-            background: var(--secondary);
-            transform: translateY(-1px);
-        }
-
-        .button.danger {
-            background: var(--danger);
-        }
-
-        .button.small {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-        }
-
-        #filterSection {
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: var(--card);
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        select {
-            padding: 0.5rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .student-entry {
-            background: var(--card);
-            border-radius: 10px;
-            padding: 1.25rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-
-        .student-entry:hover {
-            transform: translateY(-2px);
-        }
-
-        .student-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-
-        .status-dot.active { background: var(--success); }
-        .status-dot.inactive { background: var(--danger); }
-
-        .button-group {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        #rulesManager {
-            background: var(--card);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        #rulesForm {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        #rulesUl {
-            list-style: none;
-            margin-top: 1rem;
-        }
-
-        #rulesUl li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-        }
-
-        #studentDetails {
-            background: var(--card);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-top: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .modal {
-            background: var(--card);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .notice-banner {
-            background: #ff6b6b;
-            color: #ffffff;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            border: 2px solid #ffffff;
-        }
-    </style>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary: #3a6ea5;
+    --secondary: #1e4e79;
+    --success: #4bb543;
+    --danger: #d64545;
+    --bg: #eef2f5;
+    --card: #ffffff;
+    --text: #222831;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Montserrat", sans-serif; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+}
+.container {
+    width: 100%;
+    max-width: 1200px;
+}
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    margin-bottom: 2rem;
+}
+h1 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+button {
+    cursor: pointer;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    transition: 0.2s ease;
+}
+button:hover { background: var(--secondary); transform: translateY(-1px); }
+button.small { padding: 0.55rem 1rem; font-size: 0.75rem; }
+button.danger { background: var(--danger); }
+button.danger:hover { filter: brightness(0.9); }
+#studentsGrid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+}
+.student {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+}
+.status-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+.active { background: var(--success); }
+.inactive { background: var(--danger); }
+input, select {
+    padding: 0.7rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+.modal {
+    position: fixed;
+    top: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: 90%;
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.25);
+    padding: 1rem;
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+img.liveView {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+#historyPanel ul { list-style: none; margin-top: 0.5rem; }
+#historyPanel li { padding: 0.4rem 0; font-size: 0.9rem; }
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="notice-banner">
-            Note to teachers: If a student is inactive or distracted, it does not always mean they are cheating. It may simply indicate they aren’t actively opening sites or moving around. For a more accurate datapoint, check their history. This tool is meant to help monitor and save time, not replace you.
-        </div>
-        <div id="loginSection" class="header">
-            <h1>Teacher Dashboard</h1>
-            <button id="googleSignIn" class="button">Sign In with Google</button>
-        </div>
-        
-        <div id="dashboard" style="display:none">
-            <div class="header">
-                <div id="teacherInfo"></div>
-            </div>
-            
-            <div id="rulesManager"></div>
-            
-            <div id="studentsContainer">
-                <div id="studentsList" class="grid"></div>
-                <div id="studentDetails"></div>
-            </div>
-        </div>
+<div class="container">
+    <div class="card" id="loginCard">
+        <h1>Teacher Login</h1>
+        <input id="emailInput" type="email" placeholder="Email">
+        <input id="passwordInput" style="margin-top:10px" type="password" placeholder="Password">
+        <button id="loginBtn" style="margin-top:12px">Login</button>
     </div>
-    <script src="main.js"></script>
+
+    <div id="dashboard" style="display:none">
+        <div class="card">
+            <h1 id="teacherHeader"></h1>
+            <button id="logoutBtn">Logout</button>
+        </div>
+
+        <div class="card">
+            <h2>Allowed Sites</h2>
+            <input id="allowedInput" type="text" placeholder="example.com">
+            <button id="addAllowed">Add</button>
+            <ul id="allowList" style="margin-top: 1rem;"></ul>
+        </div>
+
+        <div class="card">
+            <h2>Students</h2>
+            <div id="studentsGrid"></div>
+        </div>
+
+        <div id="historyPanel" class="card"></div>
+    </div>
+</div>
+
+<div id="liveModal" class="modal">
+    <div class="modal-header">
+        <h3 id="liveTitle"></h3>
+        <button id="closeLive">Close</button>
+    </div>
+    <img id="liveImage" class="liveView">
+</div>
+
+<script>
+const serverUrl = "https://sentinel.ayaangrover.hackclub.app";
+let token = null;
+let userInfo = null;
+
+async function api(path, method="GET", body=null) {
+    const headers = { "Authorization": "Bearer " + token };
+    if (body) headers["Content-Type"] = "application/json";
+    const res = await fetch(serverUrl + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    if (res.status === 401) return logout();
+    return res.json();
+}
+
+async function login() {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const res = await fetch(serverUrl + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    token = data.token;
+    userInfo = data.user;
+    showDashboard();
+}
+
+function logout() {
+    token = null;
+    userInfo = null;
+    loginCard.style.display = "block";
+    dashboard.style.display = "none";
+}
+
+function showDashboard() {
+    loginCard.style.display = "none";
+    dashboard.style.display = "block";
+    teacherHeader.textContent = "Welcome, " + userInfo.email;
+    refreshRules();
+    refreshStudents();
+}
+
+async function refreshRules() {
+    const rules = await api("/rules");
+    allowList.innerHTML = "";
+    rules.forEach(r => {
+        const li = document.createElement("li");
+        li.textContent = r.condition.url;
+        const btn = document.createElement("button");
+        btn.textContent = "X";
+        btn.onclick = async () => {
+            const updated = rules.filter(x => x.id !== r.id);
+            await api("/rules","POST",{rules:updated});
+            refreshRules();
+        };
+        li.appendChild(btn);
+        allowList.appendChild(li);
+    });
+}
+
+addAllowed.onclick = async () => {
+    const url = allowedInput.value.trim();
+    if (!url) return;
+    const rules = await api("/rules");
+    rules.push({ id: Date.now(), condition:{url}, action:{} });
+    await api("/rules","POST",{rules});
+    allowedInput.value = "";
+    refreshRules();
+};
+
+async function refreshStudents() {
+    const data = await api("/students");
+    studentsGrid.innerHTML = "";
+    data.forEach(st => {
+        const div = document.createElement("div");
+        div.className="student";
+        const status = Date.now()-new Date(st.lastActivity).getTime()<15000;
+        div.innerHTML = `
+            <b>${st.userId}</b>
+            <br>
+            <span class="status-dot ${status?"active":"inactive"}"></span>
+            ${status?"Active":"Inactive"}
+            <br><br>
+            <button class="small" onclick="viewHistory('${st.userId}')">History</button>
+            <button class="small" onclick="livePreview('${st.userId}')">Live</button>
+        `;
+        studentsGrid.appendChild(div);
+    });
+}
+
+async function viewHistory(id) {
+    const hist = await api("/history?userId="+id);
+    historyPanel.innerHTML = "<h2>History: "+id+"</h2><ul>" + hist.map(h => {
+        const t = new Date(h.timestamp).toLocaleTimeString();
+        return `<li><b>${t}</b> ${h.tabVisited || ""}</li>`;
+    }).join("") + "</ul>";
+}
+
+async function livePreview(id) {
+    liveTitle.textContent = id;
+    liveModal.style.display="flex";
+    const upd = async () => {
+        const d = await api("/capture/latest?userId="+id);
+        if (d && d.hasImage) {
+            liveImage.src = serverUrl+"/capture/latest?userId="+id;
+        }
+    };
+    upd();
+    liveModal.interval=setInterval(upd,1000);
+}
+
+closeLive.onclick = () => {
+    clearInterval(liveModal.interval);
+    liveModal.style.display="none";
+};
+
+loginBtn.onclick = login;
+logoutBtn.onclick = logout;
+setInterval(() => { if(token) refreshStudents(); },10000);
+</script>
+
 </body>
 </html>
